@@ -9,7 +9,7 @@ $base-line-height: 1.5;
 
 $spacing-unit:     30px;
 
-$text-color:       #222;
+$text-color:       #222222;
 $background-color: #fdfdfd;
 $brand-color:      #2a7ae2;
 
@@ -18,31 +18,24 @@ $grey-color-light: lighten($grey-color, 40%);
 $grey-color-dark:  darken($grey-color, 25%);
 
 // Width of the content area
-$content-width:    800px;
+$content-width:    1200px;
 
-$on-palm:          600px;
-$on-laptop:        800px;
+$on-palm:          481px;
+$on-tablet:        768px;
+$on-desktop:	   1030px;
 
-
-
-// Use media queries like this:
-// @include media-query($on-palm) {
-//     .wrapper {
-//         padding-right: $spacing-unit / 2;
-//         padding-left: $spacing-unit / 2;
-//     }
-// }
 @mixin media-query($device) {
     @media screen and (max-width: $device) {
         @content;
     }
 }
 
+@import "bootstrap", "modules/layout", "breakpoints/base", "modules/syntax-highlighting";
 
+@include media-query( $on-tablet ) {
+	@import "breakpoints/768up";
+}
 
-// Import partials from `sass_dir` (defaults to `_sass`)
-@import
-        "base",
-        "layout",
-        "syntax-highlighting"
-;
+@include media-query( $on-desktop ) {
+	@import "breakpoints/1030up";
+}

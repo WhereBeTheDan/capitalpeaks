@@ -8,25 +8,23 @@
 # Site settings
 title: Jekyll + Gulp
 email: dkoch@sagetopia.com
-description: > # this means to ignore newlines until "baseurl:"
-  Write an awesome description for your new site here. You can edit this
-  line in _config.yml. It will appear in your document head meta (for
-  Google search results) and in your feed.xml site description.
+description: Site description asdfasd fas f
 baseurl: ''
 # baseurl: "/jekyll" # the subpath of your site, e.g. /blog
 url: "http://wherebethedan.github.io" # the base hostname & protocol for your site
-twitter_username: jekyllrb
-github_username:  jekyll
+twitter_username: wherebethedan
+github_username:  wherebethedan
 
 # Build settings
-# gems: ['jekyll-assets']
 markdown: kramdown
-include: ['_assets', '_pages']
+include: ['_pages']
 exclude: ['package.json', 'node_modules', 'gulpfile.js']
+
+# Posts
+permalink: /articles/:year/:month/:title/
 
 # Collections
 collections:
   portfolios:
     output: true
-    permalink: /:portfolio/:path
-    title: Portfolio
+    permalink: /portfolio/:path/

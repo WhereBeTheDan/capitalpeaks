@@ -1,3 +1,15 @@
+'use strict';
+
+var config = {
+	assetPath: 		'assets',
+	jekyllPath: 	'jekyll',
+	sassSrcPath: 	'assets/scss/**/*.scss',
+	cssDestPath: 	'jekyll/assets/css',
+	jsSrcLibPath:  	'assets/js/lib/**/*.js',
+	jsDestPath: 	'jekyll/assets/js',
+	bowerDir: 		'bower_components'
+};
+
 // requires
 var gulp 		= require( 'gulp' );
 var sass 		= require( 'gulp-sass' );
@@ -12,27 +24,22 @@ var cache 		= require( 'gulp-cache' );
 var del 		= require( 'del' );
 var runSeq		= require( 'run-sequence' );
 var gutil		= require( 'gulp-util' );
+var concat 		= require( 'gulp-concat' );
 
 
 // tasks
 gulp.task( 'browserSync', function() {
 	browserSync.init({
-		files: ['jekyll/_site/**'],
+		files: [config.jekyllPath + '/_site/**'],
 		server: {
-			baseDir: 'jekyll/_site'
+			baseDir: config.jekyllPath + '/_site'
 		}
 	})
 });
 
-gulp.task( 'html', ['jekyll', 'useref'], function() {
-    return gulp.src( '_site/**/*.html' )
-        .pipe( htmlmin({ collapseWhitespace: true }) )
-        .pipe( gulp.dest( '_site' ) );
-});
-
 gulp.task( 'jekyll', function (callback) {
     var spawn = require( 'child_process' ).spawn;
-    var jekyll = spawn( 'jekyll', ['build', '--watch', '--incremental', '--drafts'], { cwd: 'jekyll' } );
+    var jekyll = spawn( 'jekyll', ['build', '--watch', '--incremental', '--drafts'], { cwd: config.jekyllPath } );
 
     var jekylllogger = function (buffer) {
     	buffer.toString().split(/\n/).forEach( function (message) {
@@ -43,24 +50,27 @@ gulp.task( 'jekyll', function (callback) {
     jekyll.stdout.on( 'data', jekylllogger );
     jekyll.stderr.on( 'data', jekylllogger );
     jekyll.on( 'exit', function() {
-    	runSeq( 'useref', browserSync.reload );
+    	browserSync.reload();
     });
 });
 
 gulp.task( 'sass', function() {
-	return gulp.src('assets/scss/**/*.scss')
-		.pipe( sass({ outputStyle: 'compressed' }) )
+	return gulp.src( config.sassSrcPath )
+		.pipe( sass({ 
+			outputStyle: 'compressed', 
+			includePaths: [config.sassSrcPath, config.bowerDir + '/bootstrap-sass/assets/stylesheets'] 
+		}))
 		.pipe( prefixer({ browsers: ['last 2 versions'] }))
-		.pipe( gulp.dest( 'jekyll/assets/css' ) )
+		.pipe( gulp.dest( config.cssDestPath ) )
 		.pipe( browserSync.reload({ stream: true }) );
 });
 
-gulp.task( 'useref', function() {
-	return gulp.src( '_site/*.html' )
-		.pipe( useref() )
-		.pipe( gulpIf( '*.js', uglify() ) )
-		.pipe( gulpIf( '*.css', cssnano() ) )
-		.pipe( gulp.dest( '_site' ) );
+gulp.task('scripts', function() {
+  	return gulp.src( [config.jsSrcLibPath, config.assetPath + '/js/*.js'] )
+    	.pipe( concat( 'app.min.js', {newLine: '\r\n'} ) )
+    	.pipe( uglify({ preserveComments: 'license' }) )
+    	.pipe( gulp.dest( config.jsDestPath ) )
+    	.pipe( browserSync.reload({ stream: true }) );
 });
 
 gulp.task( 'images', function() {
@@ -68,18 +78,18 @@ gulp.task( 'images', function() {
 		.pipe( cache( imagemin({
 			interlaced: true
 		})))
-		.pipe( gulp.dest( 'jekyll/assets/images' ) );
+		.pipe( gulp.dest( config.jekyllPath + '/assets/images' ) );
 });
 
 gulp.task( 'cache:clear', function (callback) {
 	return cache.clearAll( callback );
 })
 
-gulp.task( 'watch', ['browserSync', 'sass'], function() {
-	gulp.watch( 'assets/scss/**/*.scss', ['sass'] );
-	gulp.watch( 'assets/js/**/*.js', browserSync.reload );
+gulp.task( 'watch', ['browserSync', 'sass', 'scripts'], function() {
+	gulp.watch( config.sassSrcPath, ['sass'] );
+	gulp.watch( config.jsSrcLibPath, ['scripts', browserSync.reload] );
 });
 
 gulp.task( 'default', function (callback) {
-  	runSeq( ['sass', 'html', 'browserSync', 'watch'], callback );
+  	runSeq( ['sass', 'scripts', 'jekyll', 'browserSync', 'watch'], callback );
 });

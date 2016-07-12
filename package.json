@@ -1,6 +1,11 @@
 {
   "name": "gulptest",
   "version": "1.0.0",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/WhereBeTheDan/capitalpeaks.git"
+  },
+  "private": true,
   "description": "Testing gulp",
   "main": "index.js",
   "scripts": {
@@ -12,14 +17,17 @@
   "author": "dan",
   "license": "ISC",
   "devDependencies": {
+    "bootstrap": "^3.3.6",
     "browser-sync": "^2.13.0",
     "del": "^2.2.1",
     "gulp": "^3.9.1",
     "gulp-autoprefixer": "^3.1.0",
     "gulp-cache": "^0.4.5",
+    "gulp-concat": "^2.6.0",
     "gulp-if": "^2.0.1",
     "gulp-imagemin": "^3.0.1",
     "gulp-sass": "^2.3.2",
+    "gulp-sourcemaps": "^1.6.0",
     "gulp-uglify": "^1.5.4",
     "gulp-useref": "^3.1.0",
     "gulp-util": "^3.0.7",
