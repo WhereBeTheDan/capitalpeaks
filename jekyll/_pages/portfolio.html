@@ -1,0 +1,21 @@
+---
+layout: default
+title: Portfolio
+permalink: /portfolio/
+---
+
+<div class="home">
+    <h1 class="page-heading">Portfolio</h1>
+
+    <ul class="post-list">
+        {% for item in site.portfolios %}
+            <li>
+                <h2>
+                    <a class="post-link" href="{{ item.url | prepend: site.baseurl }}">{{ item.title }}</a>
+                </h2>
+            </li>
+        {% endfor %}
+    </ul>
+
+    <p class="rss-subscribe">subscribe <a href="{{ "/feed.xml" | prepend: site.baseurl }}">via RSS</a></p>
+</div>
